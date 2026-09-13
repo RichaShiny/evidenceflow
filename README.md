@@ -1,6 +1,6 @@
-[![EvidenceFlow product walkthrough](docs/assets/evidenceflow-preview.gif)](docs/assets/evidenceflow-product-demo.mp4)
+[![EvidenceFlow product walkthrough](dist/assets/evidenceflow-preview.gif)](https://richashiny.github.io/evidenceflow/assets/evidenceflow-product-demo.mp4)
 
-▶ **[Watch the full narrated product walkthrough](docs/assets/evidenceflow-product-demo.mp4)** · 1:33 · Sound on
+▶ **[Watch the full narrated product walkthrough](https://richashiny.github.io/evidenceflow/assets/evidenceflow-product-demo.mp4)** · 1:33 · Sound on
 
 # EvidenceFlow
 
