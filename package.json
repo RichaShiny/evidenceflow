@@ -1,0 +1,11 @@
+{
+  "name": "evidenceflow",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/team.js --bundle --format=iife --outfile=dist/team.js",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": { "@supabase/supabase-js": "^2.57.0" },
+  "devDependencies": { "esbuild": "^0.25.0", "@electric-sql/pglite": "^0.3.0" }
+}

@@ -24,6 +24,12 @@ The demo uses realistic synthetic data for a fictional organization, Northstar F
 
 This is a static site. Open dist/index.html in a browser, or serve the repository with any static-file server.
 
+## Shared accounts and workspaces
+
+The team integration uses Supabase Auth, PostgreSQL membership policies, revision-checked saves, and private file storage. The source is in `src/team.js`; the database migration and access-control tests are in `supabase/migrations` and `tests`.
+
+Run `npm ci`, `npm test`, and `npm run build` before deployment. See [team setup](docs/team-setup.md) for connection settings, sign-in, membership, and storage behavior. Shared mode requires applying the migration and configuring `dist/config.js`; it is not enabled by a frontend build alone.
+
 ## Deployment
 
 GitHub Pages hosts the production site. The deployment workflow lives in .github/workflows/deploy-pages.yml.
