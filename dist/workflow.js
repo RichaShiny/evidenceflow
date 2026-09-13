@@ -10,7 +10,7 @@ notice.textContent='Personal workspace · Records are saved in this browser. Exp
 document.querySelector('.top').after(notice);
 const tools=document.createElement('div');
 tools.className='workspace-tools';
-tools.innerHTML='<button class="btn secondary" id="backup">Download workspace backup</button><button class="btn secondary" id="add-period">Add reporting period</button>';
+tools.innerHTML='<button class="btn secondary" id="backup">Download workspace backup</button>';
 notice.after(tools);
 const periodSelect=document.getElementById('period');
 const available=new Set([...periodSelect.options].map(o=>o.value));
@@ -35,7 +35,6 @@ document.getElementById('cancel').onclick=closeDialog;
 modal.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeDialog()}if(event.key==='Tab'){const elements=[...modal.querySelectorAll('button,input,select,textarea')].filter(x=>!x.disabled);const first=elements[0],last=elements.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}}});
 function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 document.getElementById('backup').onclick=()=>download('evidenceflow-backup.json',JSON.stringify({version:1,exportedAt:new Date().toISOString(),...data},null,2),'application/json');
-document.getElementById('add-period').onclick=()=>periodSelect.focus();
 document.getElementById('export-report').onclick=()=>csv('assurance-summary-'+period().replaceAll(' ','-')+'.csv',[['Period',period()],['Evidence records',items('evidence').length],['Mapped evidence',items('evidence').filter(x=>x.status==='Mapped').length],['Open actions',items('actions').filter(x=>x.status!=='Complete').length],[],['Control','Test result','Reviewer','Date','Conclusion'],...data.tests.filter(t=>t.period===period()).map(t=>[t.control,t.result,t.reviewer,t.date,t.notes])]);
 const attachmentDB=new Promise((resolve,reject)=>{const request=indexedDB.open('evidenceflow-files',1);request.onupgradeneeded=()=>request.result.createObjectStore('files');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)});
 async function attachment(id,value){const db=await attachmentDB;return new Promise((resolve,reject)=>{const tx=db.transaction('files',value?'readwrite':'readonly');const request=value?tx.objectStore('files').put(value,String(id)):tx.objectStore('files').get(String(id));let result;request.onsuccess=()=>result=request.result;tx.oncomplete=()=>resolve(result);tx.onerror=()=>reject(tx.error)})}

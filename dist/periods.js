@@ -36,8 +36,5 @@
   year.addEventListener('keydown', event=>{if(event.key==='Enter'){event.preventDefault();apply()}});
   const previousRender = render;
   render = function(){previousRender();describe()};
-  const add = document.getElementById('add-period');
-  add.textContent = 'Change reporting period';
-  add.onclick = ()=>{year.focus();year.select()};
   describe();
 })();
