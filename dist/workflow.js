@@ -14,13 +14,14 @@ tools.innerHTML='<button class="btn secondary" id="backup">Download workspace ba
 notice.after(tools);
 const periodSelect=document.getElementById('period');
 const available=new Set([...periodSelect.options].map(o=>o.value));
+try{for(const value of JSON.parse(localStorage.getItem('evidenceflow-periods')||'[]'))available.add(value)}catch{}
 for(const collection of [data.evidence,data.actions,data.tests]) for(const record of collection) if(record.period)available.add(record.period);
 for(let year=new Date().getFullYear()-1;year<=new Date().getFullYear()+1;year++) for(let quarter=1;quarter<=4;quarter++)available.add('Q'+quarter+' FY'+year);
 for(const value of available)if(![...periodSelect.options].some(o=>o.value===value))periodSelect.add(new Option(value,value));
 const preferred=localStorage.getItem('evidenceflow-period');
 if(preferred&&!available.has(preferred)){periodSelect.add(new Option(preferred,preferred));available.add(preferred)}
 if(available.has(preferred))periodSelect.value=preferred;
-periodSelect.onchange=()=>{localStorage.setItem('evidenceflow-period',period());render()};
+periodSelect.onchange=()=>{render();try{localStorage.setItem('evidenceflow-period',period());localStorage.setItem('evidenceflow-periods',JSON.stringify([...periodSelect.options].map(o=>o.value)))}catch{toast('Period changed, but this browser could not remember your selection.')}};
 const originalRender=render;
 render=function(){originalRender();const detail=document.getElementById('control-evidence');const history=document.createElement('div');history.className='test-history';history.innerHTML='<h3>Recorded tests</h3>';const tests=data.tests.filter(t=>t.control===selected&&t.period===period());if(!tests.length)history.innerHTML+='<p>No test recorded for this control and period.</p>';for(const test of tests){const article=document.createElement('article');article.innerHTML='<b>'+esc(test.result)+'</b><span class="sub">'+esc(test.reviewer)+' · '+esc(test.date)+'</span><p>'+esc(test.notes)+'</p>';history.append(article)}detail.append(history)};
 function closeDialog(){modal.classList.remove('open');returnFocus?.focus()}
@@ -34,7 +35,7 @@ document.getElementById('cancel').onclick=closeDialog;
 modal.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeDialog()}if(event.key==='Tab'){const elements=[...modal.querySelectorAll('button,input,select,textarea')].filter(x=>!x.disabled);const first=elements[0],last=elements.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}}});
 function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 document.getElementById('backup').onclick=()=>download('evidenceflow-backup.json',JSON.stringify({version:1,exportedAt:new Date().toISOString(),...data},null,2),'application/json');
-document.getElementById('add-period').onclick=()=>{const value=prompt('Reporting period (for example Q1 FY2027)');if(!value?.trim())return;const name=value.trim();if(![...periodSelect.options].some(o=>o.value===name))periodSelect.add(new Option(name,name));periodSelect.value=name;periodSelect.onchange()};
+document.getElementById('add-period').onclick=()=>periodSelect.focus();
 document.getElementById('export-report').onclick=()=>csv('assurance-summary-'+period().replaceAll(' ','-')+'.csv',[['Period',period()],['Evidence records',items('evidence').length],['Mapped evidence',items('evidence').filter(x=>x.status==='Mapped').length],['Open actions',items('actions').filter(x=>x.status!=='Complete').length],[],['Control','Test result','Reviewer','Date','Conclusion'],...data.tests.filter(t=>t.period===period()).map(t=>[t.control,t.result,t.reviewer,t.date,t.notes])]);
 const attachmentDB=new Promise((resolve,reject)=>{const request=indexedDB.open('evidenceflow-files',1);request.onupgradeneeded=()=>request.result.createObjectStore('files');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)});
 async function attachment(id,value){const db=await attachmentDB;return new Promise((resolve,reject)=>{const tx=db.transaction('files',value?'readwrite':'readonly');const request=value?tx.objectStore('files').put(value,String(id)):tx.objectStore('files').get(String(id));let result;request.onsuccess=()=>result=request.result;tx.oncomplete=()=>resolve(result);tx.onerror=()=>reject(tx.error)})}
