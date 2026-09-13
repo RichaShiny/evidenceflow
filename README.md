@@ -1,3 +1,7 @@
+[![EvidenceFlow product walkthrough](docs/assets/evidenceflow-preview.gif)](docs/assets/evidenceflow-product-demo.mp4)
+
+▶ **[Watch the full narrated product walkthrough](docs/assets/evidenceflow-product-demo.mp4)** · 1:33 · Sound on
+
 # EvidenceFlow
 
 **Continuous evidence and risk intelligence for modern assurance teams.**
